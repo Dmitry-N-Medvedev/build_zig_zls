@@ -1,0 +1,35 @@
+package(
+    default_visibility = ["PUBLIC"],
+)
+
+genrule(
+    name = "src",
+    outs = [
+        "sources",
+    ],
+    cmd = [
+        "git clone https://github.com/zigtools/zls.git sources",
+    ],
+)
+
+genrule(
+    name = "build",
+    srcs = [
+        ":src",
+    ],
+    outs = {
+        "zls": ["zls"],
+    },
+    binary = True,
+    cmd = [
+        # "mkdir -p $OUTS_ZLS",
+        "cd tools/zls/sources",
+        "$TOOLS_ZIG build -Doptimize=ReleaseSafe",
+        "cd ../../..",
+        "cp tools/zls/sources/zig-out/bin/zls $OUTS_ZLS",
+    ],
+    tools = {
+        "zig": "//tools/zig:build|zig",
+    },
+)
+

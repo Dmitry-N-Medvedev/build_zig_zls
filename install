@@ -1,0 +1,8 @@
+#!/usr/bin/env zsh
+
+plz build .//...
+
+cp -f plz-out/bin/tools/zig/zig ~/bin
+cp -Rf plz-out/bin/tools/zig/lib ~/bin
+
+cp -f plz-out/bin/tools/zls/zls ~/bin
