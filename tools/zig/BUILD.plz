@@ -1,0 +1,36 @@
+package(
+    default_visibility = ["PUBLIC"],
+)
+
+genrule(
+    name = "src",
+    outs = [
+        "sources",
+    ],
+    cmd = [
+        "git clone https://github.com/ziglang/zig.git sources",
+    ],
+)
+
+genrule(
+    name = "build",
+    srcs = [
+        ":src",
+    ],
+    outs = {
+        "zig": ["zig"],
+        "lib": ["lib"],
+    },
+    binary = True,
+    cmd = [
+        "mkdir -p $OUTS_LIB",
+        "mkdir -p tools/zig/sources/build",
+        "cd tools/zig/sources/build",
+        "cmake .. -DZIG_STATIC_LLVM=ON -DZIG_STATIC_ZSTD=ON -DCMAKE_PREFIX_PATH=\"$(brew --prefix llvm@19);$(brew --prefix lld);$(brew --prefix zstd)\" -DCMAKE_BUILD_TYPE=Release",
+        "make",
+        "cd ../../../..",
+        "mv tools/zig/sources/build/stage3/bin/zig $OUTS_ZIG",
+        "mv tools/zig/sources/build/stage3/lib/zig/* $OUTS_LIB",
+    ],
+)
+
